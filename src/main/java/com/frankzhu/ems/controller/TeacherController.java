@@ -1,8 +1,8 @@
 package com.frankzhu.ems.controller;
 
 import com.frankzhu.ems.mapper.AccountMapper;
-import com.frankzhu.ems.mapper.StudentMapper;
-import com.frankzhu.ems.model.Student;
+import com.frankzhu.ems.mapper.TeacherMapper;
+import com.frankzhu.ems.model.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,51 +12,58 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class StudentController {
+public class TeacherController {
 
-    private final StudentMapper studentMapper;
+    private final TeacherMapper teacherMapper;
     private final AccountMapper accountMapper;
     private final static String[] hexArray = {"0", "1", "2", "3", "4", "5", "6", "7",
             "8", "9", "a", "b", "c", "d", "e", "f"};
 
     @Autowired
-    public StudentController(StudentMapper studentMapper, AccountMapper accountMapper){
-        this.studentMapper = studentMapper;
+    public TeacherController(TeacherMapper teacherMapper, AccountMapper accountMapper){
+        this.teacherMapper = teacherMapper;
         this.accountMapper = accountMapper;
     }
 
-    @GetMapping("/api/student/all")
-    public List<Map<String, Object>> findAllStudent(
+    @GetMapping("/api/teacher/all")
+    public List<Map<String, Object>> findAllTeacher(
             @RequestParam(value = "no", defaultValue = "") String no,
             @RequestParam(value = "name", defaultValue = "") String name){
-        return studentMapper.findAllStudent(no, name);
+        return teacherMapper.findAllTeacher(no, name);
     }
 
-    @PostMapping("/api/student/add")
-    public Integer insertStudent(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException {
+    @GetMapping("/api/teacher/search")
+    public List<Map<String, Object>> findStudentByDe(@RequestParam(value = "de", defaultValue = "") String de){
+        return teacherMapper.findTeacherByDe(de);
+    }
+
+    @PostMapping("/api/teacher/add")
+    public Integer insertTeacher(@RequestBody Map<String, Object> params) throws NoSuchAlgorithmException {
         String name = params.get("name").toString();
         String no = params.get("no").toString();
         String sex = params.get("sex").toString();
         String birthday = params.get("birthday").toString();
+        String education = params.get("education").toString();
         String department = params.get("departmentID").toString();
         // 同步创建一个账号
-        accountMapper.addAccount(no, md5(no), "student");
-        return studentMapper.insertStudent(new Student(no, name, sex, birthday, department));
+        accountMapper.addAccount(no, md5(no), "teacher");
+        return teacherMapper.insertTeacher(new Teacher(no, name, sex, birthday, education, department));
     }
 
-    @PostMapping("/api/student/update")
-    public Integer updateStudent(@RequestBody Map<String, Object> params){
+    @PostMapping("/api/teacher/update")
+    public Integer updateTeacher(@RequestBody Map<String, Object> params){
         String name = params.get("name").toString();
         String no = params.get("no").toString();
         String sex = params.get("sex").toString();
         String birthday = params.get("birthday").toString();
+        String education = params.get("education").toString();
         String department = params.get("departmentID").toString();
-        return studentMapper.updateStudent(new Student(no, name, sex, birthday, department));
+        return teacherMapper.updateTeacher(new Teacher(no, name, sex, birthday, education, department));
     }
 
-    @GetMapping("/api/student/delete")
-    public Integer deleteStudentByNo(@RequestParam(value = "no", defaultValue = "") String no){
-        return studentMapper.deleteStudentByNo(no);
+    @GetMapping("/api/teacher/delete")
+    public Integer deleteTeacherByNo(@RequestParam(value = "no", defaultValue = "") String no){
+        return teacherMapper.deleteTeacherByNo(no);
     }
 
     // md5加密算法

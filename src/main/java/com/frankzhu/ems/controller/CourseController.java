@@ -1,7 +1,7 @@
 package com.frankzhu.ems.controller;
 
+import com.frankzhu.ems.mapper.CourseMapper;
 import com.frankzhu.ems.model.Course;
-import com.frankzhu.ems.restservice.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,42 +11,40 @@ import java.util.Map;
 @RestController
 public class CourseController {
 
-    @Autowired
-    private CourseService courseService;
+    private final CourseMapper courseMapper;
 
-    @GetMapping("/api/course/all")
-    public List<Course> findAllCourse(){
-        return courseService.findAllCourse();
+    @Autowired
+    public CourseController(CourseMapper courseMapper){
+        this.courseMapper=courseMapper;
     }
 
-    @GetMapping("/api/course/search")
-    public Course findCourseByNo(@RequestParam(value = "no", defaultValue = "") String no){
-        return courseService.findCourseByNo(no);
+    @GetMapping("/api/course/all")
+    public List<Map<String, Object>> findAllCourse(
+            @RequestParam(value = "no", defaultValue = "") String no,
+            @RequestParam(value = "name", defaultValue = "") String name){
+        return courseMapper.findAllCourse(no, name);
     }
 
     @PostMapping("/api/course/add")
     public Integer insertCourse(@RequestBody Map<String, Object> params) {
         String name = params.get("name").toString();
         String no = params.get("no").toString();
-        Integer redit = Integer.parseInt(params.get("redit").toString());
-        String department = params.get("department").toString();
-        String teacher = params.get("teacher").toString();
-        return courseService.insertCourse(new Course(no, name, redit, department, teacher));
+        Integer credit = Integer.parseInt(params.get("credit").toString());
+        String department = params.get("departmentID").toString();
+        return courseMapper.insertCourse(new Course(no, name, credit, department));
     }
 
     @PostMapping("/api/course/update")
     public Integer updateCourse(@RequestBody Map<String, Object> params){
         String name = params.get("name").toString();
         String no = params.get("no").toString();
-        Integer redit = Integer.parseInt(params.get("redit").toString());
-        String department = params.get("department").toString();
-        String teacher = params.get("teacher").toString();
-        return courseService.updateCourse(new Course(no, name, redit, department, teacher));
+        Integer credit = Integer.parseInt(params.get("credit").toString());
+        return courseMapper.updateCourse(new Course(no, name, credit, null));
     }
 
     @GetMapping("/api/course/delete")
     public Integer deleteCourseByNo(@RequestParam(value = "no", defaultValue = "") String no){
-        return courseService.deleteCourseByNo(no);
+        return courseMapper.deleteCourseByNo(no);
     }
 
 }

@@ -4,14 +4,14 @@ public class Elective {
 
     private Integer id;
     private Integer grade;
-    private String studentNo;
-    private String courseNo;
+    private String student;
+    private String open;
 
-    public Elective(Integer id, Integer grade, String studentNo, String courseNo){
+    public Elective(Integer id, Integer grade, String student, String open){
         this.id = id;
         this.grade = grade;
-        this.studentNo = studentNo;
-        this.courseNo = courseNo;
+        this.student = student;
+        this.open = open;
     }
 
     public Integer getId() {
@@ -26,17 +26,17 @@ public class Elective {
     public void setGrade(Integer grade) {
         this.grade = grade;
     }
-    public String getStudentNo() {
-        return studentNo;
+    public String getStudent() {
+        return student;
     }
-    public void setStudentNo(String studentNo) {
-        this.studentNo = studentNo == null ? null : studentNo.trim();
+    public void setStudent(String student) {
+        this.student = student == null ? null : student.trim();
     }
-    public String getCourseNo() {
-        return courseNo;
+    public String getOpen() {
+        return open;
     }
-    public void setCourseNo(String courseNo) {
-        this.courseNo = courseNo == null ? null : courseNo.trim();
+    public void setOpen(String open) {
+        this.open = open == null ? null : open.trim();
     }
 
 }

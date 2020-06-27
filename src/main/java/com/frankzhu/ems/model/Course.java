@@ -2,18 +2,16 @@ package com.frankzhu.ems.model;
 
 public class Course {
 
-    private String no;
-    private String name;
-    private Integer redit;
-    private String department;
-    private String teacher;
+    private String no;         // 课程号
+    private String name;       // 课程名
+    private Integer credit;    // 学分
+    private String department; // 开课院系号
 
-    public Course(String no, String name, Integer redit, String department, String teacher){
+    public Course(String no, String name, Integer credit, String department){
         this.no = no;
         this.name = name;
-        this.redit = redit;
+        this.credit = credit;
         this.department = department;
-        this.teacher = teacher;
     }
 
     public String getNo() {
@@ -28,17 +26,11 @@ public class Course {
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
     }
-    public Integer getRedit() {
-        return redit;
+    public Integer getCredit() {
+        return credit;
     }
-    public void setRedit(Integer redit) {
-        this.redit = redit;
-    }
-    public String getTeacher() {
-        return teacher;
-    }
-    public void setTeacher(String teacher) {
-        this.teacher = teacher == null ? null : teacher.trim();
+    public void setCredit(Integer credit) {
+        this.credit = credit;
     }
     public String getDepartment(){
         return department;

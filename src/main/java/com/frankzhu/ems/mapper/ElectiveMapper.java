@@ -1,6 +1,5 @@
 package com.frankzhu.ems.mapper;
 
-import com.frankzhu.ems.model.Course;
 import com.frankzhu.ems.model.Elective;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -12,35 +11,40 @@ import java.util.Map;
 public interface ElectiveMapper {
 
     // student grade
-    @Select("select c.no, c.name, e.grade, c.department, c.redit, c.teacher from course c inner join elective e " +
-            "on c.no = e.courseNo where studentNo=#{no} and grade is not null")
-    List<Map<String, Object>> findGradeByStudentNo(@Param("no") String no);
-
-    // course average grade
-    @Select("select c.name, avg(grade) as avgGrade from course c inner join elective e " +
-            "on c.no = e.courseNo where grade is not null group by c.name ")
-    List<Map<String, Object>> findAverageGrade();
+//    @Select("select c.no as cid, c.name as cname, c.credit, t.name as tname ,e.grade from open as o join teacher as t " +
+//            "join term as te join course as c join elective as e on o.course=c.no and o.teacher=t.no " +
+//            "and o.term=te.no and e.open=o.id where e.student=#{student} and te.no=#{term}")
+//    List<Map<String, Object>> findGradeByStudentNo(@Param("no") String no, @Param("term") String term);
 
     // search students
-    @Select("select e.id, s.no, s.name, e.grade, s.age, s.sex, s.department from student s inner join elective e " +
-            "on s.no = e.studentNo where e.courseNo=#{no}")
-    List<Map<String, Object>> findStudentByCourseNo(@Param("no") String no);
+    @Select("select o.id, e.id as eid, s.no, s.name as name, s.sex, d.name as department, e.grade from" +
+            " elective as e join open as o join student as s join department as d on e.open=o.id " +
+            "and e.student=s.no and s.department=d.no where o.id=#{oid}")
+    List<Map<String, Object>> findStudentByCourseNo(@Param("oid") String oid);
 
     // search enable courses
-    @Select("select * from course where no not in (select courseNo from elective where studentNo=#{no})")
-    List<Course> findEnableCourseByStudentNo(@Param("no") String no);
+    @Select("select o.id, c.no as cid, c.name as cname, c.credit, t.name as tname, o.time, o.studentNumber " +
+            "from open as o join teacher as t join term as te join course as c on o.course=c.no " +
+            "and o.teacher=t.no and o.term=te.no where o.id not in (select open from elective where student=#{no}) " +
+            "and te.no=(select max(no) from term) and t.no like concat('%',#{tno},'%') and t.name like concat('%',#{tname},'%') " +
+            "and c.no like concat('%',#{cno},'%') and c.name like concat('%',#{cname},'%') and o.choice is true")
+    List<Map<String, Object>> findEnableCourseByStudentNo(
+            @Param("no") String no,
+            @Param("tno") String tno,
+            @Param("tname") String tname,
+            @Param("cno") String cno,
+            @Param("cname") String cname
+    );
 
     // search own courses
-    @Select("select * from course where no in (select courseNo from elective where studentNo=#{no} and grade is null)")
-    List<Course> findOwnCourseByStudentNo(@Param("no") String no);
-
-    // search finish courses
-    @Select("select * from course where no in (select courseNo from elective " +
-            "where studentNo=#{no} and grade is not null)")
-    List<Course> findFinishCourseByStudentNo(@Param("no") String no);
+    @Select("select o.id, c.no as cid, c.name as cname, c.credit, t.name as tname, o.time, o.studentNumber " +
+            "from open as o join teacher as t join term as te join course as c on o.course=c.no " +
+            "and o.teacher=t.no and o.term=te.no where o.id in " +
+            "(select open from elective where student=#{no} and grade is null)")
+    List<Map<String, Object>> findOwnCourseByStudentNo(@Param("no") String no);
 
     // add
-    @Insert("insert into elective (grade, studentNo, courseNo) VALUES (#{grade}, #{studentNo}, #{courseNo})")
+    @Insert("insert into elective (grade, student, open) VALUES (#{grade}, #{student}, #{open})")
     Integer insertElective(Elective elective);
 
     // update
@@ -48,7 +52,7 @@ public interface ElectiveMapper {
     Integer updateElective(Elective elective);
 
     // delete
-    @Delete("delete from elective where studentNo=#{sno} and courseNo=#{cno}")
+    @Delete("delete from elective where student=#{sno} and open=#{cno}")
     Integer deleteElectiveByNo(@Param("sno") String sno, @Param("cno") String cno);
 
 }

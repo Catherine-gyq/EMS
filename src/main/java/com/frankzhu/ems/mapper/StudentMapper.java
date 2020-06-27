@@ -5,29 +5,27 @@ import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface StudentMapper {
 
-    // search all
-    @Select("select * from student")
-    List<Student> findAllStudent();
+    // 模糊查询学生
+    @Select("select s.no, s.name as name, s.sex, s.birthday, d.name as department, d.no as departmentID " +
+            "from student as s join department as d on s.department=d.no " +
+            "where s.no like concat('%',#{no},'%') and s.name like concat('%',#{name},'%')")
+    List<Map<String, Object>> findAllStudent(@Param("no") String no, @Param("name") String name);
 
-    // search one
-    @Select("select * from student where no = #{no}")
-    Student findStudentByNo(@Param("no") String no);
-
-    // add
-    @Insert("insert into student (no, name, sex, age, department, loginname, password) VALUES" +
-            "(#{no}, #{name}, #{sex}, #{age}, #{department}, #{loginname}, #{password})")
+    // 添加学生
+    @Insert("insert into student (no, name, sex, birthday, department) VALUES" +
+            "(#{no}, #{name}, #{sex}, #{birthday}, #{department})")
     Integer insertStudent(Student student);
 
-    // update
-    @Update("update student set name=#{name}, sex=#{sex}, age=#{age}, department=#{department}," +
-            "loginname=#{loginname}, password=#{password} where no=#{no}")
+    // 更新信息
+    @Update("update student set name=#{name}, sex=#{sex}, birthday=#{birthday}, department=#{department} where no=#{no}")
     Integer updateStudent(Student student);
 
-    // delete
+    // 删除学生
     @Delete("delete from student where no=#{no}")
     Integer deleteStudentByNo(@Param("no") String no);
 
