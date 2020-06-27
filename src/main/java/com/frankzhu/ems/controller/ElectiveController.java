@@ -18,12 +18,12 @@ public class ElectiveController {
         this.electiveMapper = electiveMapper;
     }
 
-//    @GetMapping("/api/elective/find/grade/student")
-//    public List<Map<String, Object>> findGradeByStudentNo(
-//            @RequestParam(value = "no", defaultValue = "")String no,
-//            @RequestParam(value = "term", defaultValue = "")String term){
-//        return electiveMapper.findGradeByStudentNo(no, term);
-//    }
+    @GetMapping("/api/elective/find/grade/student")
+    public List<Map<String, Object>> findGradeByStudentNo(
+            @RequestParam(value = "no", defaultValue = "")String no,
+            @RequestParam(value = "term", defaultValue = "")String term){
+        return electiveMapper.findGradeByStudentNo(no, term);
+    }
 
     @GetMapping("/api/elective/find/student/course")
     public List<Map<String, Object>> findStudentByOID(@RequestParam(value = "no", defaultValue = "")String oid){
